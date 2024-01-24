@@ -1,5 +1,5 @@
-import { test } from './test';
+import { nuiActions } from './classes/NuiActions';
 
 setImmediate(() => {
-  console.log(test());
+  nuiActions.send('test', { name: 'world' });
 });

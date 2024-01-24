@@ -6,8 +6,11 @@
     "allowSyntheticDefaultImports": true,
     "module": "CommonJS",
     "types": ["@citizenfx/client", "@types/node"],
-    "lib": ["ES2020"]
+    "lib": ["ES2020"],
+    "paths": {
+      "@shared/*": ["../../../shared/*"]
+    }
   },
-  "include": ["./**/*"],
-  "exclude": ["**/node_modules", "**/__tests__/*"]
+  "include": ["./**/*", "../../../shared", "../shared/**/*"],
+  "exclude": ["**/node_modules"]
 }
