@@ -1,0 +1,19 @@
+{
+  "name": "game",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
+  },
+  "devDependencies": {
+    "@citizenfx/client": "2.0.7345-1",
+    "@citizenfx/server": "2.0.7345-1",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/node": "^20.11.6",
+    "rollup": "^4.9.6",
+    "rollup-plugin-ts": "^3.4.5"
+  }
+}
