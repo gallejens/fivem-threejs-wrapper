@@ -5,8 +5,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "module": "CommonJS",
-    "types": ["@citizenfx/client", "@types/node"],
+    "types": ["@types/node", "@citizenfx/client"],
     "lib": ["ES2020"],
+    "skipLibCheck": true,
     "paths": {
       "@shared/*": ["../../../shared/*"]
     }

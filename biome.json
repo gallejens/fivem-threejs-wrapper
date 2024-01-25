@@ -8,10 +8,14 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noConfusingVoidType": "off"
+        "noConfusingVoidType": "off",
+        "noExplicitAny": "off"
       },
       "complexity": {
         "noForEach": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off"
       }
     }
   },

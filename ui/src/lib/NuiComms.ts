@@ -1,6 +1,6 @@
-import { type NUIRequest, type NUIResponse } from '@shared/types/nui';
+import { type NUIComms } from '@shared/types/nui-comms';
 
-class NuiActions {
+class NuiComms {
   private endpoint: string;
 
   constructor() {
@@ -8,11 +8,11 @@ class NuiActions {
     this.endpoint = `https://${GetParentResourceName()}/request`;
   }
 
-  public async request<T extends keyof NUIRequest>(
+  public async request<T extends keyof NUIComms.Request>(
     action: T,
-    data: NUIRequest[T]['data'] = null
+    data: NUIComms.Request[T]['data'] = null
   ) {
-    const result: NUIResponse<T> = await fetch(this.endpoint, {
+    const result: NUIComms.Response<T> = await fetch(this.endpoint, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
@@ -31,4 +31,4 @@ class NuiActions {
   }
 }
 
-export const nuiActions = new NuiActions();
+export const nuiComms = new NuiComms();

@@ -4,18 +4,15 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w"
+    "build": "pnpm typecheck && node esbuild.cjs",
+    "watch": "pnpm typecheck && node esbuild.cjs --watch",
+    "typecheck": "tsc --noEmit -p src/client/tsconfig.json && tsc --noEmit -p src/server/tsconfig.json"
   },
   "devDependencies": {
     "@citizenfx/client": "2.0.7345-1",
     "@citizenfx/server": "2.0.7345-1",
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.6",
     "@types/node": "^20.11.6",
-    "rollup": "^4.9.6",
-    "rollup-plugin-typescript-paths": "^1.5.0",
-    "tslib": "^2.6.2"
+    "esbuild": "^0.19.12",
+    "typescript": "5.3.3"
   }
 }
