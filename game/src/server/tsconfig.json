@@ -5,9 +5,13 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "module": "CommonJS",
-    "types": ["@citizenfx/server", "@types/node"],
-    "lib": ["ES2020"]
+    "types": ["@types/node", "@citizenfx/server"],
+    "lib": ["ES2020"],
+    "skipLibCheck": true,
+    "paths": {
+      "@shared/*": ["../../../shared/*"]
+    }
   },
-  "include": ["./**/*"],
-  "exclude": ["**/node_modules", "**/__tests__/*"]
+  "include": ["./**/*", "../../../shared", "../shared/**/*"],
+  "exclude": ["**/node_modules"]
 }
