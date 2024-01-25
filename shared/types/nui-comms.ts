@@ -1,10 +1,8 @@
-import { Vec3 } from './util';
+import { Vec2 } from './util';
 
 export namespace NUIComms {
   export type Event = {
-    coords: Vec3;
-    heading: number;
-    request: number;
+    pos: Vec2;
   };
 
   export type EventBody = {
@@ -22,7 +20,6 @@ export namespace NUIComms {
 
   export type Request = {
     ready: RequestWrapper<null, null>;
-    request: RequestWrapper<number, boolean>;
   };
 
   export type Response<T extends keyof Request> = {

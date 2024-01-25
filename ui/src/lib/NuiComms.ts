@@ -4,14 +4,20 @@ class NuiComms {
   private endpoint: string;
 
   constructor() {
-    //@ts-ignore
-    this.endpoint = `https://${GetParentResourceName()}/request`;
+    if (import.meta.env.PROD) {
+      //@ts-ignore
+      this.endpoint = `https://${GetParentResourceName()}/request`;
+    } else {
+      this.endpoint = '';
+    }
   }
 
   public async request<T extends keyof NUIComms.Request>(
     action: T,
     data: NUIComms.Request[T]['data'] = null
-  ) {
+  ): Promise<NUIComms.Request[T]['response'] | null> {
+    if (import.meta.env.DEV) return null;
+
     const result: NUIComms.Response<T> = await fetch(this.endpoint, {
       method: 'post',
       headers: {

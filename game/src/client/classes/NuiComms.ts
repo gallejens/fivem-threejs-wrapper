@@ -24,7 +24,9 @@ class NuiComms {
     this.handlers = {};
     this.ready = false;
     this.awaitingReadyResolvers = [];
+  }
 
+  public init() {
     RegisterNuiCallbackType(NUI_CALLBACK_NAME);
     on(`__cfx_nui:${NUI_CALLBACK_NAME}`, this.handleRequest);
 

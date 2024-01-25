@@ -1,23 +1,14 @@
+import { Vector2 } from '../shared/vector2';
 import { nuiComms } from './classes/NuiComms';
+import { getClosestNPC, getEntityCoords } from './util';
 
-nuiComms.register('request', async data => {
-  await new Promise(res => setTimeout(res, 1000));
-  return data % 2 === 0;
+setImmediate(() => {
+  nuiComms.init();
 });
-
-RegisterCommand(
-  'req',
-  (_: number, args: string[]) => {
-    const input = Number(args[0]);
-    if (Number.isNaN(input)) return;
-    nuiComms.send('request', input);
-  },
-  false
-);
 
 let thread: NodeJS.Timer | null = null;
 RegisterCommand(
-  'thread',
+  'npc',
   () => {
     if (thread) {
       clearInterval(thread);
@@ -25,10 +16,38 @@ RegisterCommand(
       return;
     }
 
+    const ped = getClosestNPC(200);
+    if (!ped) throw new Error('No ped found');
+
+    FreezeEntityPosition(ped, true);
+    SetEntityInvincible(ped, true);
+    ClearPedTasksImmediately(ped);
+
+    // to own ped to target
+    const pedCoords = getEntityCoords(ped);
+    SetEntityCoords(
+      PlayerPedId(),
+      pedCoords.x,
+      pedCoords.y + 2,
+      pedCoords.z,
+      false,
+      false,
+      false,
+      false
+    );
+
     thread = setInterval(() => {
-      const [x, y, z] = GetEntityCoords(PlayerPedId(), true);
-      nuiComms.send('coords', { x, y, z });
-    }, 1);
+      const [isVisible, ...posArr] = GetScreenCoordFromWorldCoord(
+        pedCoords.x,
+        pedCoords.y,
+        pedCoords.z
+      );
+
+      if (!isVisible) return;
+
+      const vec = Vector2.create(posArr);
+      nuiComms.send('pos', vec);
+    }, 4);
   },
   false
 );

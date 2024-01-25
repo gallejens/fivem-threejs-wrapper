@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+
+  .box {
+    position: absolute;
+    width: 10px;
+    aspect-ratio: 1;
+    background-color: red;
+  }
+}
