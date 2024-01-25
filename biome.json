@@ -12,10 +12,14 @@
         "noExplicitAny": "off"
       },
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "off",
+        "noBannedTypes": "off"
       },
       "style": {
         "noNonNullAssertion": "off"
+      },
+      "a11y": {
+        "useKeyWithClickEvents": "off"
       }
     }
   },

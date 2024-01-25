@@ -1,9 +1,11 @@
+import { Canvas } from "@react-three/fiber";
 import { NUIComms } from "@shared/types/nui-comms";
 import { useRenderCount, useWindowSize } from "@uidotdev/usehooks";
 import { FC, useEffect, useRef } from "react";
 import { nuiComms } from "./lib/NuiComms";
 
 import "./app.scss";
+import { CanvasContent } from "./components/CanvasContent";
 
 export const App: FC = () => {
   const renderCount = useRenderCount();
@@ -41,7 +43,9 @@ export const App: FC = () => {
 
   return (
     <div className='wrapper'>
-      <div className='box' ref={boxRef} />
+      <Canvas>
+        <CanvasContent />
+      </Canvas>
     </div>
   );
 };
