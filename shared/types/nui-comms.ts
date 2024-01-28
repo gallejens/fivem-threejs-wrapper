@@ -2,17 +2,15 @@ import { Vec3 } from './util';
 
 export namespace NUIComms {
   export type Event = {
-    init: {
-      camera: {
-        fov: number;
-        near: number;
-        far: number;
-      };
-    };
     update: {
       camera: {
         position: Vec3;
         rotation: Vec3;
+        meta?: {
+          fov: number;
+          near: number;
+          far: number;
+        };
       };
     };
   };

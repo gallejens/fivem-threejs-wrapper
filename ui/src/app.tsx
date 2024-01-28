@@ -3,13 +3,16 @@ import { FC, useEffect, useState } from "react";
 import { nuiComms } from "./lib/NuiComms";
 
 import { useThree } from "@react-three/fiber";
-import { DoubleSide, Euler, MathUtils } from "three";
+import { DoubleSide, Euler } from "three";
 import { ROTATION_ORDER } from "./constants";
-import { transformCoords } from "./lib/util";
+import { transformCoords, transformRotation } from "./lib/util";
 
 export const App: FC = () => {
   const [isReady, setIsReady] = useState(false);
-  const { camera } = useThree(s => ({ camera: s.camera }));
+  const { camera } = useThree(s => ({
+    camera: s.camera,
+    scene: s.scene,
+  }));
 
   if (!("isPerspectiveCamera" in camera)) {
     console.error("Main camera is not perspective camera");
@@ -19,24 +22,20 @@ export const App: FC = () => {
   useEffect(() => {
     const handler = ({ data: event }: MessageEvent<NUIComms.EventBody>) => {
       switch (event.action) {
-        case "init": {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.near = event.data.camera.near;
-          camera.far = event.data.camera.far;
-          camera.fov = event.data.camera.fov;
-          camera.rotation.order = ROTATION_ORDER;
-          camera.updateProjectionMatrix();
-          break;
-        }
         case "update": {
+          if (event.data.camera.meta) {
+            camera.near = event.data.camera.meta.near;
+            camera.far = event.data.camera.meta.far;
+            camera.fov = event.data.camera.meta.fov;
+            camera.rotation.order = ROTATION_ORDER;
+            camera.updateProjectionMatrix();
+          }
+
           const camPos = transformCoords(event.data.camera.position);
           camera.position.set(camPos.x, camPos.y, camPos.z);
-          const camRot = event.data.camera.rotation;
-          camera.rotation.set(
-            MathUtils.degToRad(camRot.x),
-            MathUtils.degToRad(Math.abs(camRot.y) > 90 ? -camRot.z : camRot.z),
-            MathUtils.degToRad(camRot.y)
-          );
+
+          const camRot = transformRotation(event.data.camera.rotation);
+          camera.rotation.set(camRot.x, camRot.y, camRot.z);
         }
       }
     };
@@ -59,12 +58,34 @@ export const App: FC = () => {
   return (
     <>
       <mesh
-        position={[-1689.5376, 14.7824, 3144.0439]}
-        rotation={new Euler(0, 0, 0, ROTATION_ORDER)}
-        scale={[3, 3, 3]}
+        position={[-117.36372375488281, 31.976551055908203, -6357.12255859375]}
+        rotation={
+          new Euler(
+            0.0010449246678478808,
+            2.3554334428580637,
+            0,
+            ROTATION_ORDER
+          )
+        }
+        scale={[2, 2, 2]}
       >
         <planeGeometry />
         <meshBasicMaterial color='green' side={DoubleSide} />
+      </mesh>
+      <mesh
+        position={[-133.39816284179688, 31.443492889404297, -6331.47509765625]}
+        rotation={
+          new Euler(
+            -0.00001827436309791915,
+            2.358800016765025,
+            0,
+            ROTATION_ORDER
+          )
+        }
+        scale={[0.05, 0.05, 0.05]}
+      >
+        <sphereGeometry />
+        <meshBasicMaterial color='blue' />
       </mesh>
     </>
   );

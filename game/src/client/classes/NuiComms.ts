@@ -29,7 +29,6 @@ class NuiComms {
   public init() {
     RegisterNuiCallbackType(NUI_CALLBACK_NAME);
     on(`__cfx_nui:${NUI_CALLBACK_NAME}`, this.handleRequest);
-    this.logger.info('Initialized');
 
     const readyProm = new Promise<void>(res => {
       this.register('ready', () => {

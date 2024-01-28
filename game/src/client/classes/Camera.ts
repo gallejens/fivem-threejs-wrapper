@@ -1,35 +1,57 @@
+import { NUIComms } from '@shared/types/nui-comms';
+import { ObjEntries } from '@shared/types/util';
+import { degToRad } from '../util';
 import { nuiComms } from './NuiComms';
 
 class Camera {
-  private updateThread: NodeJS.Timer | null;
+  private metadata: Required<NUIComms.Event['update']['camera']>['meta'];
+  private thread: NodeJS.Timer | null;
 
   constructor() {
-    this.updateThread = null;
+    this.metadata = {
+      fov: 0,
+      near: 0,
+      far: 0,
+    };
+    this.thread = null;
   }
 
-  public init() {
-    nuiComms.send('init', {
+  public startThread() {
+    if (this.thread) return;
+
+    this.thread = setInterval(this.onFrame, 4);
+  }
+
+  private onFrame = () => {
+    const newMetadata: typeof this.metadata = {
+      fov: GetFinalRenderedCamFov(),
+      near: GetFinalRenderedCamNearClip(),
+      far: GetFinalRenderedCamFarClip(),
+    };
+
+    const metaChanged = (
+      Object.entries(newMetadata) as ObjEntries<typeof newMetadata>
+    ).some(([k, v]) => this.metadata[k] !== v);
+
+    nuiComms.send('update', {
       camera: {
-        fov: GetFinalRenderedCamFov(),
-        near: GetFinalRenderedCamNearClip(),
-        far: GetFinalRenderedCamFarClip(),
+        position: this.getCameraPosition(),
+        rotation: this.getCameraRotation(),
+        meta: metaChanged ? newMetadata : undefined,
       },
     });
+
+    this.metadata = newMetadata;
+  };
+
+  private getCameraPosition() {
+    const [x, y, z] = GetFinalRenderedCamCoord();
+    return { x, y, z };
   }
 
-  public startUpdateThread() {
-    if (this.updateThread) return;
-
-    this.updateThread = setInterval(() => {
-      const [posX, posY, posZ] = GetGameplayCamCoord();
-      const [rotX, rotY, rotZ] = GetGameplayCamRot(1);
-      nuiComms.send('update', {
-        camera: {
-          position: { x: posX, y: posY, z: posZ },
-          rotation: { x: rotX, y: rotY, z: rotZ },
-        },
-      });
-    }, 1);
+  private getCameraRotation() {
+    const [x, y, z] = GetFinalRenderedCamRot(1);
+    return degToRad({ x, y, z });
   }
 }
 

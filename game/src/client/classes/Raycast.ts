@@ -79,4 +79,15 @@ export class Raycast {
       Math.sin(rotationRadians.x)
     );
   }
+
+  public getSurfaceRotation() {
+    if (!this.surfaceNormal) throw new Error('No surface normal found');
+
+    const upVector = new Vector3(0, 1, 0);
+    const rotationAxis = upVector.crossProduct(this.surfaceNormal).normalize;
+    const rotationAngle = Math.acos(upVector.dotProduct(this.surfaceNormal));
+    const rotationVector = rotationAxis.multiply(rotationAngle);
+
+    return rotationVector;
+  }
 }
