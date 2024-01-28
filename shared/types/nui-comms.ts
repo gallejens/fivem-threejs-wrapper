@@ -1,8 +1,20 @@
-import { Vec2 } from './util';
+import { Vec3 } from './util';
 
 export namespace NUIComms {
   export type Event = {
-    pos: Vec2;
+    init: {
+      camera: {
+        fov: number;
+        near: number;
+        far: number;
+      };
+    };
+    update: {
+      camera: {
+        position: Vec3;
+        rotation: Vec3;
+      };
+    };
   };
 
   export type EventBody = {

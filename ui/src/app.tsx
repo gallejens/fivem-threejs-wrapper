@@ -1,47 +1,71 @@
 import { NUIComms } from "@shared/types/nui-comms";
-import { useRenderCount, useWindowSize } from "@uidotdev/usehooks";
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useState } from "react";
 import { nuiComms } from "./lib/NuiComms";
 
-import "./app.scss";
+import { useThree } from "@react-three/fiber";
+import { Euler, MathUtils } from "three";
+import { ROTATION_ORDER } from "./constants";
+import { transformCoords } from "./lib/util";
 
 export const App: FC = () => {
-  const renderCount = useRenderCount();
-  const windowSize = useWindowSize();
-  const boxRef = useRef<HTMLDivElement>(null);
+  const [isReady, setIsReady] = useState(false);
+  const { camera } = useThree(s => ({ camera: s.camera }));
+
+  if (!("isPerspectiveCamera" in camera)) {
+    console.error("Main camera is not perspective camera");
+    return null;
+  }
 
   useEffect(() => {
-    const handler = (e: MessageEvent<NUIComms.EventBody>) => {
-      const event = e.data;
+    const handler = ({ data: event }: MessageEvent<NUIComms.EventBody>) => {
       switch (event.action) {
-        case "pos": {
-          const { x, y } = event.data;
-          const [xPx, yPx] = [
-            x * (windowSize.width ?? 0),
-            y * (windowSize.height ?? 0),
-          ];
-          boxRef.current!.style.transform = `translate(${xPx}px, ${yPx}px)`;
+        case "init": {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.near = event.data.camera.near;
+          camera.far = event.data.camera.far;
+          camera.fov = event.data.camera.fov;
+          camera.rotation.order = ROTATION_ORDER;
+          camera.updateProjectionMatrix();
           break;
+        }
+        case "update": {
+          const camPos = transformCoords(event.data.camera.position);
+          camera.position.set(camPos.x, camPos.y, camPos.z);
+          const camRot = event.data.camera.rotation;
+          camera.rotation.set(
+            MathUtils.degToRad(camRot.x),
+            MathUtils.degToRad(Math.abs(camRot.y) > 90 ? -camRot.z : camRot.z),
+            MathUtils.degToRad(camRot.y)
+          );
         }
       }
     };
 
     window.addEventListener("message", handler);
-
-    nuiComms.request("ready");
+    setIsReady(true);
 
     return () => {
       window.removeEventListener("message", handler);
     };
-  }, [windowSize]);
+  }, [camera]);
 
+  // send ready event on first ready
   useEffect(() => {
-    console.log(`Rendercount: ${renderCount}`);
-  }, [renderCount]);
+    if (!isReady) return;
+
+    nuiComms.request("ready");
+  }, [isReady]);
 
   return (
-    <div className='wrapper'>
-      <div className='box' ref={boxRef} />
-    </div>
+    <>
+      <mesh
+        position={[-1741.69, 12.93467, 2928.028]}
+        rotation={new Euler(0, 0, 0, ROTATION_ORDER)}
+        scale={[0.1, 0.1, 0.1]}
+      >
+        <boxGeometry />
+        <meshBasicMaterial color='green' />
+      </mesh>
+    </>
   );
 };

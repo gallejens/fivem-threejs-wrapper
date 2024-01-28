@@ -29,14 +29,19 @@ class NuiComms {
   public init() {
     RegisterNuiCallbackType(NUI_CALLBACK_NAME);
     on(`__cfx_nui:${NUI_CALLBACK_NAME}`, this.handleRequest);
+    this.logger.info('Initialized');
 
-    this.register('ready', () => {
-      this.ready = true;
-      this.awaitingReadyResolvers.forEach(res => res());
-      this.awaitingReadyResolvers = [];
+    const readyProm = new Promise<void>(res => {
+      this.register('ready', () => {
+        this.ready = true;
+        this.awaitingReadyResolvers.forEach(res => res());
+        this.awaitingReadyResolvers = [];
+        this.logger.info('Ready');
+        res();
+      });
     });
 
-    this.logger.info('Initialized');
+    return readyProm;
   }
 
   private handleRequest = async <T extends keyof NUIComms.Request>(
