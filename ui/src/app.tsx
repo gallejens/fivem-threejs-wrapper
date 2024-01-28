@@ -1,37 +1,41 @@
 import { NUIComms } from "@shared/types/nui-comms";
-import { useRenderCount } from "@uidotdev/usehooks";
 import { FC, useEffect, useState } from "react";
 import { nuiComms } from "./lib/NuiComms";
 
 import { useThree } from "@react-three/fiber";
-import { PerspectiveCamera, Vector3 } from "three";
+import { Euler, MathUtils } from "three";
+import { ROTATION_ORDER } from "./constants";
 import { transformCoords } from "./lib/util";
 
 export const App: FC = () => {
   const [isReady, setIsReady] = useState(false);
-  const renderCount = useRenderCount();
-  const { camera } = useThree(s => ({ camera: s.camera as PerspectiveCamera }));
+  const { camera } = useThree(s => ({ camera: s.camera }));
+
+  if (!("isPerspectiveCamera" in camera)) {
+    console.error("Main camera is not perspective camera");
+    return null;
+  }
 
   useEffect(() => {
     const handler = ({ data: event }: MessageEvent<NUIComms.EventBody>) => {
       switch (event.action) {
         case "init": {
+          camera.aspect = window.innerWidth / window.innerHeight;
           camera.near = event.data.camera.near;
           camera.far = event.data.camera.far;
           camera.fov = event.data.camera.fov;
-          camera.rotation.order = "YZX";
+          camera.rotation.order = ROTATION_ORDER;
           camera.updateProjectionMatrix();
           break;
         }
         case "update": {
-          const cameraPosition = transformCoords(event.data.camera.position);
-          camera.position.set(
-            cameraPosition.x,
-            cameraPosition.y,
-            cameraPosition.z
-          );
-          camera.lookAt(
-            cameraPosition.add(transformCoords(event.data.camera.rotation))
+          const camPos = transformCoords(event.data.camera.position);
+          camera.position.set(camPos.x, camPos.y, camPos.z);
+          const camRot = event.data.camera.rotation;
+          camera.rotation.set(
+            MathUtils.degToRad(camRot.x),
+            MathUtils.degToRad(Math.abs(camRot.y) > 90 ? -camRot.z : camRot.z),
+            MathUtils.degToRad(camRot.y)
           );
         }
       }
@@ -52,14 +56,16 @@ export const App: FC = () => {
     nuiComms.request("ready");
   }, [isReady]);
 
-  useEffect(() => {
-    console.log(`Rendercount: ${renderCount}`);
-  }, [renderCount]);
-
   return (
-    <mesh position={[-1656.0, 13.4, 3148.0]}>
-      <boxGeometry />
-      <meshBasicMaterial color='green' />
-    </mesh>
+    <>
+      <mesh
+        position={[-1741.69, 12.93467, 2928.028]}
+        rotation={new Euler(0, 0, 0, ROTATION_ORDER)}
+        scale={[0.1, 0.1, 0.1]}
+      >
+        <boxGeometry />
+        <meshBasicMaterial color='green' />
+      </mesh>
+    </>
   );
 };

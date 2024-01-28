@@ -11,10 +11,11 @@ class Camera {
   }
 
   public init() {
-    const camData = this.getCameraData();
     nuiComms.send('init', {
       camera: {
-        ...camData,
+        fov: GetFinalRenderedCamFov(),
+        near: GetFinalRenderedCamNearClip(),
+        far: GetFinalRenderedCamFarClip(),
       },
     });
   }
@@ -23,39 +24,15 @@ class Camera {
     if (this.updateThread) return;
 
     this.updateThread = setInterval(() => {
-      const cameraCoords = this.getCameraCoords();
-      const cameraRotation = this.getCameraRotation();
+      const [posX, posY, posZ] = GetGameplayCamCoord();
+      const [rotX, rotY, rotZ] = GetGameplayCamRot(1);
       nuiComms.send('update', {
         camera: {
-          position: cameraCoords,
-          rotation: cameraRotation,
+          position: { x: posX, y: posY, z: posZ },
+          rotation: { x: rotX, y: rotY, z: rotZ },
         },
       });
     }, 1);
-  }
-
-  private getCameraCoords(): Vec3 {
-    const [x, y, z] = GetFinalRenderedCamCoord();
-    return { x, y, z };
-  }
-
-  // TODO: Currently uses lookAt dir, change to just rotation
-  private getCameraRotation(): Vec3 {
-    const rotDeg = Vector3.create(GetFinalRenderedCamRot(2));
-    const rotRad = rotDeg.multiply(Math.PI / 180);
-    return {
-      x: -1 * Math.sin(rotRad.z) * Math.cos(rotRad.x),
-      y: Math.cos(rotRad.z) * Math.cos(rotRad.x),
-      z: Math.sin(rotRad.x),
-    };
-  }
-
-  private getCameraData(): NUIComms.Event['init']['camera'] {
-    return {
-      fov: GetFinalRenderedCamFov(),
-      near: GetFinalRenderedCamNearClip(),
-      far: GetFinalRenderedCamFarClip(),
-    };
   }
 }
 
