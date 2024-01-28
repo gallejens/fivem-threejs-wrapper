@@ -1,18 +1,16 @@
+import { Html } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
 import { NUIComms } from "@shared/types/nui-comms";
 import { FC, useEffect, useState } from "react";
-import { nuiComms } from "./lib/NuiComms";
-
-import { useThree } from "@react-three/fiber";
-import { DoubleSide, Euler } from "three";
-import { ROTATION_ORDER } from "./constants";
-import { transformCoords, transformRotation } from "./lib/util";
+import { Euler } from "three";
+import { ROTATION_ORDER } from "../../constants";
+import { nuiComms } from "../../lib/NuiComms";
+import { transformCoords, transformRotation } from "../../lib/util";
+import { UI } from "../ui";
 
 export const App: FC = () => {
   const [isReady, setIsReady] = useState(false);
-  const { camera } = useThree(s => ({
-    camera: s.camera,
-    scene: s.scene,
-  }));
+  const { camera } = useThree(s => ({ camera: s.camera }));
 
   if (!("isPerspectiveCamera" in camera)) {
     console.error("Main camera is not perspective camera");
@@ -58,34 +56,12 @@ export const App: FC = () => {
   return (
     <>
       <mesh
-        position={[-117.36372375488281, 31.976551055908203, -6357.12255859375]}
-        rotation={
-          new Euler(
-            0.0010449246678478808,
-            2.3554334428580637,
-            0,
-            ROTATION_ORDER
-          )
-        }
-        scale={[2, 2, 2]}
+        position={[450.0543518066406, 30.75804328918457, 986.4019775390625]}
+        rotation={new Euler(0, 1.570796314870016 - Math.PI, 0, ROTATION_ORDER)}
       >
-        <planeGeometry />
-        <meshBasicMaterial color='green' side={DoubleSide} />
-      </mesh>
-      <mesh
-        position={[-133.39816284179688, 31.443492889404297, -6331.47509765625]}
-        rotation={
-          new Euler(
-            -0.00001827436309791915,
-            2.358800016765025,
-            0,
-            ROTATION_ORDER
-          )
-        }
-        scale={[0.05, 0.05, 0.05]}
-      >
-        <sphereGeometry />
-        <meshBasicMaterial color='blue' />
+        <Html transform occlude scale={0.05}>
+          <UI />
+        </Html>
       </mesh>
     </>
   );
