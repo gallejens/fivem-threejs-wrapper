@@ -1,6 +1,3 @@
-import { NUIComms } from '@shared/types/nui-comms';
-import { Vec3 } from '@shared/types/util';
-import { Vector3 } from '../../shared/vector3';
 import { nuiComms } from './NuiComms';
 
 class Camera {

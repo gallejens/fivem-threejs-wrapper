@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { nuiComms } from "./lib/NuiComms";
 
 import { useThree } from "@react-three/fiber";
-import { Euler, MathUtils } from "three";
+import { DoubleSide, Euler, MathUtils } from "three";
 import { ROTATION_ORDER } from "./constants";
 import { transformCoords } from "./lib/util";
 
@@ -59,12 +59,12 @@ export const App: FC = () => {
   return (
     <>
       <mesh
-        position={[-1741.69, 12.93467, 2928.028]}
+        position={[-1689.5376, 14.7824, 3144.0439]}
         rotation={new Euler(0, 0, 0, ROTATION_ORDER)}
-        scale={[0.1, 0.1, 0.1]}
+        scale={[3, 3, 3]}
       >
-        <boxGeometry />
-        <meshBasicMaterial color='green' />
+        <planeGeometry />
+        <meshBasicMaterial color='green' side={DoubleSide} />
       </mesh>
     </>
   );
