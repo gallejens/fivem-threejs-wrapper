@@ -1,8 +1,7 @@
 {
-  "name": "jens-fivem-3d-ui",
+  "name": "fivem-threejs-wrapper",
   "version": "1.0.0",
-  "author": "Jens",
-  "description": "FiveM Resource to display in-world UI",
+  "author": "gallejens",
   "license": "ISC",
   "scripts": {
     "build": "cd game && pnpm build && cd ../ui && pnpm build",

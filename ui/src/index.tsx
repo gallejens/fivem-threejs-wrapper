@@ -3,10 +3,10 @@ import { useThree } from "@react-three/fiber";
 import { NUIComms } from "@shared/types/nui-comms";
 import { FC, useEffect, useState } from "react";
 import { Euler } from "three";
-import { ROTATION_ORDER } from "../../constants";
-import { nuiComms } from "../../lib/NuiComms";
-import { transformCoords, transformRotation } from "../../lib/util";
-import { UI } from "../ui";
+import { UI } from "./components/ui";
+import { ROTATION_ORDER } from "./constants";
+import { nuiComms } from "./lib/NuiComms";
+import { transformCoords, transformRotation } from "./lib/util";
 
 export const App: FC = () => {
   const [isReady, setIsReady] = useState(false);

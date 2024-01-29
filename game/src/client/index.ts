@@ -69,6 +69,9 @@ RegisterCommand(
 
     const surfaceRotation = raycast.getSurfaceRotation();
 
+    console.log(
+      'Do not forget to transform these coords to threejs coordsystem'
+    );
     console.log({ coords: raycast.coords, rotation: surfaceRotation });
   },
   false
